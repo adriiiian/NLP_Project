@@ -8,5 +8,9 @@ class SentAnalysisForm(ModelForm):
         fields = ('sentence',)
 
         labels = {
-            'sentence': 'Sentence: ',
+            'sentence': 'Enter sentence: ',
+        }
+
+        widgets = {
+            'sentence': forms.TextInput(attrs={'class': 'form-control'})
         }

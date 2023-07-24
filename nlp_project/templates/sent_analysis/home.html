@@ -2,17 +2,37 @@
 {% load static %}
 
 {% block content %}
-
-    <main class="container">
-        <form action="{% url 'predict' %}" method="POST">
+    <header>
+        <h1 class="text-center">Sentiment Analysis</h1>
+    </header>
+    <main>
+        <div class="instructions container-fluid">
+            <h2>Instructions:</h2>
+            <p>
+                Welcome to the Sentiment Analysis Tool! Please enter a piece of text you want to analyze below and click the "Analyze" button.
+            </p>
+            <p>
+                The tool will evaluate the sentiment of the text as positive, negative, or neutral and display the result below.
+            </p>
+        </div>
+        <form action="{% url 'predict' %}" method="POST" id="sentimentForm">
             {% csrf_token %}
-            <label for="sentence">Sentence</label>
-            {{ form.sentence }}
-            <button type="submit" id="submit-button">Submit</button>
+            <div class="container-fluid">
+                <div class="form-group">
+                    <label for="textInput">{{ form.sentence.label }}</label>
+                    {{ form.sentence }}
+                </div>
+                <button class="btn btn-primary" type="submit">Analyze</button>
+            </div>
+            
+            
         </form>
+        <div id="result" class="hidden container-fluid mt-2">
+            <h2>Analysis Result:</h2>
+            <h2 id="sentimentResult">{{ results }}</h2>
+        </div>
     </main>
+    
 
-<h1>Hello world!</h1>
-<h1>{{ results }}</h1>
 
 {% endblock content %}

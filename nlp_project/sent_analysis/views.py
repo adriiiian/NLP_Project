@@ -26,21 +26,16 @@ def predict(request):
         context = {
             'form': form
         }
-        # print("hello")
+        
         if form.is_valid():
 
             raw_sentence = form.cleaned_data.get('sentence')
             cleaned_sent = remove_irr_char(raw_sentence)
             swr_sent = remove_stop_words(cleaned_sent)
             stem_sent = stem_sentence(swr_sent)
-            print(swr_sent)
-            print(stem_sent)
 
-            vect_sentence = SentAnalysisConfig.vectorizer.transform([swr_sent]).toarray()
-            # print(vect_sentence)
-            # print(type(vect_sentence))
-            prediction = SentAnalysisConfig.model2.predict(vect_sentence)
-            # print(prediction)
+            vect_sentence = SentAnalysisConfig.count_vectorizer.transform([swr_sent]).toarray()
+            prediction = SentAnalysisConfig.model5_stopwords_oversampling_78.predict(vect_sentence)
             result = None
             if prediction == 1:
                 result = "Positive"
