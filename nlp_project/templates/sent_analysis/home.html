@@ -1,37 +1,57 @@
 {% extends "sent_analysis/layout.html" %}
 {% load static %}
 
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock styles %}
+
 {% block content %}
-    <header>
-        <h1 class="text-center">Sentiment Analysis</h1>
-    </header>
-    <main>
-        <div class="instructions container-fluid">
-            <h2>Instructions:</h2>
-            <p>
-                Welcome to the Sentiment Analysis Tool! Please enter a piece of text you want to analyze below and click the "Analyze" button.
-            </p>
-            <p>
-                The tool will evaluate the sentiment of the text as positive, negative, or neutral and display the result below.
-            </p>
-        </div>
-        <form action="{% url 'predict' %}" method="POST" id="sentimentForm">
-            {% csrf_token %}
-            <div class="container-fluid">
-                <div class="form-group">
-                    <label for="textInput">{{ form.sentence.label }}</label>
-                    {{ form.sentence }}
+    <div class="view" style="background-image: url('http://mdbootstrap.com/img/Photos/Others/images/92.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center center;">
+        <header>
+            <h1 class="text-center text-white">Natural Language Processing Application with Django</h1>
+        </header>
+        <div class="mask rgba-gradient d-flex justify-content-center align-items-center">
+            <main>
+                <div class="container">
+                    <div class="row mt-5">
+                        <div class="col-md-6 mb-5 mt-md-0 mt-5 white-text text-center text-md-left">
+                            <h2 class="text-white">Instructions:</h2>
+                            <p class="text-white">
+                                Welcome to the Sentiment Analysis Tool! Please enter a piece of text you want to analyze below and click the "Analyze" button.
+                            </p>
+                            <p class="text-white">
+                                The tool will evaluate the sentiment of the text as positive, negative, or neutral and display the result below.
+                            </p>
+                        </div>
+                        <div class="col-md-6 col-xl-5 mb-4">
+                            <div class="card wow fadeInRight" data-wow-delay="0.3s" style="visibility: visible; animation-name: fadeInRight; animation-delay: 0.3s;">
+                                <div class="card-body">
+                                    <div class="text-center">
+                                        <h3 class="text-white">Sentiment Analysis</h3>
+                                        <hr class="hr-light">
+                                    </div>
+                                    <form action="{% url 'predict' %}" method="POST" id="sentimentForm" autocomplete="off">
+                                        {% csrf_token %}
+                                        <div class="md-form">
+                                            <label for="textInput">{{ form.sentence.label }}</label>
+                                            {{ form.sentence }}
+                                        </div>
+                                        <div class="md-form mt-2">
+                                            <button class="btn btn-primary" type="submit">Analyze</button>
+                                        </div>
+                                        <div class="md-form mt-2">
+                                            <hr class="hr-light">
+                                            <h4 class="text-white" id="sentimentResult">Analysis Result: {{ results }}</h4>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn btn-primary" type="submit">Analyze</button>
-            </div>
-            
-            
-        </form>
-        <div id="result" class="hidden container-fluid mt-2">
-            <h2>Analysis Result:</h2>
-            <h2 id="sentimentResult">{{ results }}</h2>
+            </main>
         </div>
-    </main>
+    </div>
     
 
 
