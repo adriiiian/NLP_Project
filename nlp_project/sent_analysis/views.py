@@ -6,6 +6,7 @@ from sent_analysis.apps import SentAnalysisConfig
 import numpy as np
 import nltk
 from nltk.stem import PorterStemmer
+from nltk.stem import WordNetLemmatizer
 
 # Create your views here.
 
@@ -27,16 +28,22 @@ def predict(request):
             'form': form
         }
         
+        # Checks if the submitted inputs are valid
         if form.is_valid():
 
-            raw_sentence = form.cleaned_data.get('sentence')
-            cleaned_sent = remove_irr_char(raw_sentence)
-            swr_sent = remove_stop_words(cleaned_sent)
-            stem_sent = stem_sentence(swr_sent)
+            raw_sentence = form.cleaned_data.get('sentence')        # Gets the string input from the input text field
+            cleaned_sent = remove_irr_char(raw_sentence)            # Cleans the sentence by removing irrelevant characters and converting everything to lowercase
+            swr_sent = remove_stop_words(cleaned_sent)              # Removes stopwords in the sentence
+            lem_sent = lemmatize(swr_sent)                          # Lemmatize the sentence to break the words to its root.
 
-            vect_sentence = SentAnalysisConfig.count_vectorizer.transform([swr_sent]).toarray()
-            prediction = SentAnalysisConfig.model5_stopwords_oversampling_78.predict(vect_sentence)
+            # Vectorize the pre-processed input text by the best performing vectorizer
+            vect_sentence = SentAnalysisConfig.lemma_tfidf_vectorizer.transform([lem_sent]).toarray()
+
+            # Calls the best performing model to predict the sentiment given the pre-processed input text
+            prediction = SentAnalysisConfig.model7_svm_lemma_os_tfidf.predict(vect_sentence)
             result = None
+
+            # Converts the output of the model to Positive, Negative or Neutral texts
             if prediction == 1:
                 result = "Positive"
 
@@ -55,8 +62,11 @@ def predict(request):
 
         return HttpResponse(template.render(context, request))
 
-
-
+"""
+    This function is used to remove irrelevant characters.
+    Accepts a string (sentence)
+    Returns a string (sentence cleaned form)
+"""
 def remove_irr_char(sentence):
     word_list = []
     tokenized_sent = nltk.word_tokenize(sentence)
@@ -66,8 +76,13 @@ def remove_irr_char(sentence):
 
     word_list = list(filter(None, word_list))
 
-    return ' '.join(word_list)
+    return ' '.join(word_list).lower()
 
+"""
+    This function is used to remove stopwords in the given list of stopwords.
+    Accepts a string (sentence)
+    Returns a string (sentence with removed stopwords)
+"""
 def remove_stop_words(sentence):
 
     tokenized = nltk.word_tokenize(sentence)
@@ -81,12 +96,17 @@ def remove_stop_words(sentence):
 
     return ' '.join(filtered_list)
 
-def stem_sentence(sentence):
-    stemmer = PorterStemmer()
+"""
+    This function is used to lemmatize the sentence to convert each token into their root form.
+    Accepts a string (sentence)
+    Returns a string (sentence with lemmatize tokens)
+"""
+def lemmatize(sentence):
+    lemmatizer = WordNetLemmatizer()
     word_list = []
     tokenized_sent = nltk.word_tokenize(sentence)
     for i in tokenized_sent:
-        stem_word = stemmer.stem(i)
-        word_list.append(stem_word)
+        token = lemmatizer.lemmatize(i)
+        word_list.append(token)
 
     return ' '.join(word_list)
